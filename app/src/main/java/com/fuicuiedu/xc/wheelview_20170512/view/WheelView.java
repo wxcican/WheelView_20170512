@@ -142,7 +142,8 @@ public class WheelView extends LinearLayout{
             case MotionEvent.ACTION_UP:
                 //手指松开后继续滑动一段距离
                 actionUp(getScrollY());
-                //todo 选择后提示用户 -------------- 接口回调
+                //选择后提示用户 -------------- 接口回调
+                listener.selected(currentIndex,wheelItems.get(currentIndex).getText().toString());
                 break;
         }
 
@@ -203,18 +204,67 @@ public class WheelView extends LinearLayout{
         }
     }
 
+    //手指松开后继续滑动一段距离
+    private void actionUp(int scrollY){
+        //根据手指的滑动速度获取到当前选中的条目
+        getSelectdIndex(scrollY);
+        //得到需要移动的距离
+        int dy = (currentIndex - firstSelectedIndex) * unitHeight - scrollY;
+        //让控件在0.1秒内从当前位置，滑动到指定位置
+        smoothScroolBy(dy);
+    }
 
+    //让控件在0.1秒内从当前位置，滑动到指定位置,必须要配合computeScroll使用！！！！
+    private void smoothScroolBy(int dy) {
+        scroller.startScroll(0, getScrollY(), 0, dy, 100);
+        postInvalidate();
+    }
 
+    // #######################################    接口回调    ########################
+    public interface OnSelectedListener{
+        void selected(int id,String text);
+    }
 
+    private OnSelectedListener listener;
 
+    public void setOnSelectedListener(OnSelectedListener listener){
+        this.listener = listener;
+    }
 
+    //  #####################################  对外提供三个方法   ####################
+    //设置数据
+    public void setData(ArrayList<String> list){
+        //每次需要先清空所有的数据
+        removeAllViews();
+        wheelItems = new ArrayList<>();
+        currentIndex = firstSelectedIndex;
 
+        //遍历数据生成对应的文本控件并添加到屏幕上
+        for (int i = 0; i < list.size(); i++) {
+            TextView tv = new TextView(context);
+            tv.setGravity(Gravity.CENTER);
+            tv.setText(list.get(i));
+            tv.setLayoutParams(params);
 
+            wheelItems.add(tv);
+            setSelectedFont();//设置选择项的字体
+            //根据首选项的索引滑动到首选项的位置
+            smoothScroolBy((firstSelectedIndex - (itemCount / 2)) * unitHeight);
+            addView(tv);
+        }
 
+        //计算出首选项和中间项的差值，以便于后续计算出选中项和滑动距离使用
+        firstSelectedIndex -= (firstSelectedIndex - (itemCount /2));
+        invalidate();//刷新ui
+    }
 
+    public int getHeight2(){
+        return Height;
+    }
 
-
-
+    public int getUnitHeight(){
+        return unitHeight;
+    }
 
     //将传进来的值变为期望的值
     //unit 期望转换得到值的类型（TypedValue.COMPLEX_UNIT_DIP,得到dp类型的值）
