@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.fuicuiedu.xc.wheelview_20170512.R;
 
@@ -61,20 +62,22 @@ public class MyWheelView extends FrameLayout {
         int lineBottomY = height / 2 + wheelView.getUnitHeight() / 2 - lineHeight;
 
         //初始化两条线的高宽
-        LinearLayout.LayoutParams lineParams1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, lineHeight);
-        LinearLayout.LayoutParams lineParams2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, lineHeight);
+        LayoutParams lineParams1 = new LayoutParams(LayoutParams.MATCH_PARENT, lineHeight);
+        LayoutParams lineParams2 = new LayoutParams(LayoutParams.MATCH_PARENT, lineHeight);
 
 
         //创建两条线并且设置距离顶部距离以及线的颜色，并且把线添加到屏幕上
         View line1 = new View(context);
         line1.setBackgroundColor(lineColor);
         lineParams1.topMargin = lineTopY;
+        Log.e("aaa","lineTopY=" + lineTopY);
         line1.setLayoutParams(lineParams1);
         addView(line1);
 
         View line2 = new View(context);
         line2.setBackgroundColor(lineColor);
         lineParams2.topMargin = lineBottomY;
+        Log.e("aaa","lineBottomY=" + lineBottomY);
         line2.setLayoutParams(lineParams2);
         addView(line2);
 
